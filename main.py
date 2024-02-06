@@ -41,11 +41,8 @@ async def delete_blacklisted_messages(client, message):
        if message.text:
            if contains_blacklisted_word(message.text, blacklist) and delete_mode:
                await message.delete()
-           # Additional condition for two-line messages:
-           elif message.text.count('\n') >= 2:  # Check for line breaks
-               await message.delete()
    except Exception as e:
        print(f"Error processing message: {e}")
 
-print("fuck you")
+print("Bot started")
 app.run()
