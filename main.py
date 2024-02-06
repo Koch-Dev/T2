@@ -36,13 +36,16 @@ blacklist = load_blacklist()
 delete_mode = True
 
 @app.on_message(filters.group)
-@app.on_message(filters.group)
 async def delete_blacklisted_messages(client, message):
-    try:
-        if message.text:
-            if contains_blacklisted_word(message.text, blacklist) and delete_mode:
-                await message.delete()
-    except Exception as e:
-        print(f"Error processing message: {e}")
+   try:
+       if message.text:
+           if contains_blacklisted_word(message.text, blacklist) and delete_mode:
+               await message.delete()
+           # Additional condition for two-line messages:
+           elif message.text.count('\n') >= 2:  # Check for line breaks
+               await message.delete()
+   except Exception as e:
+       print(f"Error processing message: {e}")
+
 print("fuck you")
 app.run()
