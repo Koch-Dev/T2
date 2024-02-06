@@ -44,12 +44,5 @@ async def delete_blacklisted_messages(client, message):
                 await message.delete()
     except Exception as e:
         print(f"Error processing message: {e}")
-
-@app.on_message(filters.command(["textblock"]) & filters.group & filters.user(OWNER_ID) & filters.reply)
-async def toggle_delete_mode(client, message):
-    global delete_mode
-    delete_mode = not delete_mode
-    mode_status = "ON" if delete_mode else "OFF"
-    await message.reply(f"Blacklist delete mode is now {mode_status}.")
 print("fuck you")
 app.run()
