@@ -41,6 +41,8 @@ async def delete_blacklisted_messages(client, message):
        if message.text:
            if contains_blacklisted_word(message.text, blacklist) and delete_mode:
                await message.delete()
+           elif message.text.count('\n') >= 2 and not contains_blacklisted_word(message.text, blacklist):
+               pass
        elif message.caption:
            if contains_blacklisted_word(message.caption, blacklist) and delete_mode:
                await message.delete()
