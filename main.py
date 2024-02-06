@@ -41,6 +41,9 @@ async def delete_blacklisted_messages(client, message):
        if message.text:
            if contains_blacklisted_word(message.text, blacklist) and delete_mode:
                await message.delete()
+       elif message.caption:
+           if contains_blacklisted_word(message.caption, blacklist) and delete_mode:
+               await message.delete()
    except Exception as e:
        print(f"Error processing message: {e}")
 
