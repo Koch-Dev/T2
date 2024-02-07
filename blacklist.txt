@@ -1,7 +1,11 @@
 Cell
+cell
 Classroom
+classroom
 Ncert
+ncert
 Example
+example
 1
 2
 Allen
