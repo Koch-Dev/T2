@@ -1,7 +1,8 @@
 import unicodedata
-from config import API_ID, API_HASH, BOT_TOKEN, OWNER_ID
 import re
 from pyrogram import Client, filters
+from font import font_library
+from config import API_ID, API_HASH, BOT_TOKEN, BLACKLIST_FILE, OWNER_ID
 
 app = Client(
     "zoney",
@@ -29,25 +30,32 @@ def normalize_text(text):
     return unicodedata.normalize('NFKD', text)
 
 def has_special_font(text):
-    special_font_regex = re.compile(r'[\u0000-\u001F\u007F-\u009F\u00AD\u0600-\u0605\u061C\u06DD\u070F\u17B4\u17B5\u200B-\u200D\u2028-\u202F\u2060-\u206F\uFEFF\uFFF9-\uFFFB]')
-    return bool(special_font_regex.search(text))
+    for char in text:
+        for font_style in font_library.values():
+            if char in font_style:
+                return True
+    return False
 
 blacklist = load_blacklist()
 delete_mode = True
 
 @app.on_message(filters.group)
 async def delete_blacklisted_messages(client, message):
-   try:
-       if message.text:
-           if contains_blacklisted_word(message.text, blacklist) and delete_mode:
-               await message.delete()
-           elif message.text.count('\n') >= 2 and not contains_blacklisted_word(message.text, blacklist):
-               pass
-       elif message.caption:
-           if contains_blacklisted_word(message.caption, blacklist) and delete_mode:
-               await message.delete()
-   except Exception as e:
-       print(f"Error processing message: {e}")
+    try:
+        if message.text:
+            normalized_text = normalize_text(message.text)
+            if contains_blacklisted_word(normalized_text, blacklist) and delete_mode:
+                await message.delete()
+            elif has_special_font(normalized_text) and delete_mode:
+                await message.delete()
+        elif message.caption:
+            normalized_caption = normalize_text(message.caption)
+            if contains_blacklisted_word(normalized_caption, blacklist) and delete_mode:
+                await message.delete()
+            elif has_special_font(normalized_caption) and delete_mode:
+                await message.delete()
+    except Exception as e:
+        print(f"Error processing message: {e}")
 
 print("Bot started")
 app.run()
